@@ -11,7 +11,6 @@ import Joinus from "@/component/joinus/Joinus";
 import Blogs from "@/component/blogs/Blogs";
 import Footer from "@/component/footer/Footer";
 import Reviews from "@/component/reviews/Reviews";
-import User from "@/component/user/User";
 
 import { Appcontext } from "@/context/Appcontext";
 import { useRouter } from "next/navigation";
@@ -84,12 +83,12 @@ const defaultView = searchParams?.get("activeView") || "Navbar"; // default Navb
             </button>
 
             <button
-              onClick={() => setActiveView("About us")}
+              onClick={() => setActiveView("Aboutus")}
               className={`flex items-start gap-3 text-gray-600 hover:bg-gray-100 p-2 rounded-lg w-full text-left ${
                 activeView === "Messages" ? "bg-gray-200 font-semibold" : ""
               }`}
             >
-              {open && <span>About us</span>}
+              {open && <span>Aboutus</span>}
             </button>
 
             <button
@@ -177,7 +176,7 @@ const defaultView = searchParams?.get("activeView") || "Navbar"; // default Navb
           <Home />
         </>
       )}
-      {activeView === "About us" && (
+      {activeView === "Aboutus" && (
         <>
           <Aboutus />
         </>
