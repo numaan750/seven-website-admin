@@ -55,7 +55,7 @@ const defaultView = searchParams?.get("activeView") || "Navbar"; // default Navb
           <div className="h-20 w-20 relative">
             <Image
               src="/logo-black.png"
-              alt="Logo"
+              alt="logo"
               className="object-contain"
               fill
             />
