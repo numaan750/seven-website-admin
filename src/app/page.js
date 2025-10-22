@@ -54,7 +54,7 @@ const defaultView = searchParams?.get("activeView") || "Navbar"; // default Navb
         <div className="flex items-center">
           <div className="h-20 w-20 relative">
             <Image
-              src="/logo-black.png"
+              src="/Logo-black.png"
               alt="logo"
               className="object-contain"
               fill
