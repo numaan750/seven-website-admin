@@ -1,3 +1,4 @@
+"use client";
 import { Appcontext } from "@/context/Appcontext";
 import React, { useContext, useEffect, useState } from "react";
 
