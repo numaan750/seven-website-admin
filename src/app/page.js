@@ -1,103 +1,188 @@
+"use client";
+import React, { useContext, useEffect, useState } from "react";
 import Image from "next/image";
+import Navbar from "@/component/navbar/navbar";
+import Home from "@/component/home/Home";
+import Aboutus from "@/component/aboutus/Aboutus"
+import Componies from "@/component/componies/Componies";
+import Servies from "@/component/servies/Servies";
+import Worksection from "@/component/worksection/Worksection";
+import Joinus from "@/component/joinus/Joinus";
+import Blogs from "@/component/blogs/Blogs";
+import Footer from "@/component/footer/Footer";
+import Reviews from "@/component/reviews/Reviews";
+import User from "@/component/user/User";
 
-export default function Home() {
+import { Appcontext } from "@/context/Appcontext";
+import { useRouter, useSearchParams } from "next/navigation";
+
+export default function SimpleSidebarLayout() {
+  const [open, setopen] = useState(true);
+  const { token, user, logout } = useContext(Appcontext); 
+
+  const searchParams = useSearchParams(); // call hook correctly
+  const defaultView = searchParams.get("activeView") || "Navbar"; // default Navbar
+  const [activeView, setActiveView] = useState(defaultView);
+
+  const router = useRouter();
+
+  const handlelogout = async () => {
+    await logout();
+    alert("Logout successfully!");
+    router.push("/login")
+  }
+
+ useEffect(() => {
+  if (typeof window !== "undefined") {
+    const localToken = localStorage.getItem("token");
+    if (!localToken) {
+      router.push("/login");
+    }
+  }
+}, [token]);
+
+useEffect(() => {
+  console.log("Token in layout:", token);
+}, [token]);
+
+  
   return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              src/app/page.js
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
+    <div className="h-screen flex bg-gray-50 font-sans">
+      <aside className="w-72 bg-white shadow-lg p-6 flex flex-col">
+        <div className="flex items-center">
+          <div className="h-20 w-20 relative">
             <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
+              src="/logo-black.png"
+              alt="Logo"  
+              className="object-contain"
+              fill
             />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+          </div>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+
+        <nav className="flex-1 overflow-y-auto">
+          <ul className="space-y-2">
+            
+              <button onClick={() => setActiveView("Navbar")} className={`flex items-start gap-3 text-gray-600 hover:bg-gray-100 p-2 rounded-lg w-full text-left ${activeView === "Dashboard" ? 'bg-gray-200 font-semibold' : ''}`}>
+                {open && <span>Navbar</span>}
+              </button>
+            
+
+            
+              <button onClick={() => setActiveView("Home")} className={`flex items-start gap-3 text-gray-600 hover:bg-gray-100 p-2 rounded-lg w-full text-left ${activeView === "Profile" ? 'bg-gray-200 font-semibold' : ''}`}>
+                {open && <span>Home</span>}
+              </button>
+            
+
+            
+              <button onClick={() => setActiveView("About us")} className={`flex items-start gap-3 text-gray-600 hover:bg-gray-100 p-2 rounded-lg w-full text-left ${activeView === "Messages" ? 'bg-gray-200 font-semibold' : ''}`}>
+                {open && <span>About us</span>}
+              </button>
+            
+
+            
+              <button onClick={() => setActiveView("Componies")} className={`flex items-start gap-3 text-gray-600 hover:bg-gray-100 p-2 rounded-lg w-full text-left ${activeView === "Projects" ? 'bg-gray-200 font-semibold' : ''}`}>
+                {open && <span>Componies</span>}
+              </button>
+            
+
+            
+              <button onClick={() => setActiveView("Servies")} className={`flex items-start gap-3 text-gray-600 hover:bg-gray-100 p-2 rounded-lg w-full text-left ${activeView === "Calendar" ? 'bg-gray-200 font-semibold' : ''}`}>
+                {open && <span>Servies</span>}
+              </button>
+            
+
+            
+              <button onClick={() => setActiveView("Worksection")} className={`flex items-start gap-3 text-gray-600 hover:bg-gray-100 p-2 rounded-lg w-full text-left ${activeView === "Reports" ? 'bg-gray-200 font-semibold' : ''}`}>
+                {open && <span>Worksection</span>}
+              </button>
+            
+
+            
+              <button onClick={() => setActiveView("Joinus")} className={`flex items-start gap-3 text-gray-600 hover:bg-gray-100 p-2 rounded-lg w-full text-left ${activeView === "Settings" ? 'bg-gray-200 font-semibold' : ''}`}>
+                {open && <span>Joinus</span>}
+              </button>
+            
+
+            
+              <button onClick={() => setActiveView("Reviews")} className={`flex items-start gap-3 text-gray-600 hover:bg-gray-100 p-2 rounded-lg w-full text-left ${activeView === "Billing" ? 'bg-gray-200 font-semibold' : ''}`}>
+                {open && <span>Reviews</span>}
+              </button>
+            
+
+            
+              <button onClick={() => setActiveView("Blogs")} className={`flex items-start gap-3 text-gray-600 hover:bg-gray-100 p-2 rounded-lg w-full text-left ${activeView === "Help" ? 'bg-gray-200 font-semibold' : ''}`}>
+                {open && <span>Blogs</span>}
+              </button>
+            
+            
+              <button onClick={() => setActiveView("Footer")} className={`flex items-start gap-3 text-gray-600 hover:bg-gray-100 p-2 rounded-lg w-full text-left ${activeView === "Help" ? 'bg-gray-200 font-semibold' : ''}`}>
+                {open && <span>Footer</span>}
+              </button>
+            
+          </ul>
+        </nav>
+
+        <div className="mt-6">
+          <button
+            onClick={handlelogout}
+          className="w-full py-2 rounded-lg bg-red-50 text-red-600 border border-red-100 hover:bg-red-100 transition">
+            Logout
+          </button>
+        </div>
+      </aside>
+
+      {activeView === "Navbar" && (
+          <>
+           <Navbar />
+          </>
+        )}
+        {activeView === "Home" && (
+          <>
+           <Home />
+          </>
+        )}
+        {activeView === "About us" && (
+          <>
+           <Aboutus />
+          </>
+        )}
+        {activeView === "Componies" && (
+          <>
+           <Componies />
+          </>
+        )}
+        {activeView === "Servies" && (
+          <>
+           <Servies />
+          </>
+        )}
+        {activeView === "Worksection" && (
+          <>
+           <Worksection />
+          </>
+        )}
+        {activeView === "Joinus" && (
+          <>
+           <Joinus />
+          </>
+        )}
+        {activeView === "Reviews" && (
+          <>
+           <Reviews />
+          </>
+        )}
+        
+        {activeView === "Blogs" && (
+          <>
+           <Blogs />
+          </>
+        )}
+        {activeView === "Footer" && (
+          <>
+           <Footer />
+          </>
+        )}
     </div>
   );
 }
