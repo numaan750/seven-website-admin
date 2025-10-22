@@ -6,7 +6,11 @@ const NavbarForm = () => {
   const { getNavbar, createNavbar, updateNavbar, deleteNavbar } =
     useContext(Appcontext);
 
-  const emptyForm = { logo: "", navlinks: [{ link: "" }] };
+  const emptyForm = {
+    logo_white:"",
+    logo_black: "",
+    navlinks: [{ link: "" }], 
+  };
 
   const [formData, setFormData] = useState({ ...emptyForm });
   const [isEditMode, setIsEditMode] = useState(false);
@@ -91,7 +95,8 @@ const NavbarForm = () => {
       const res = await getNavbar();
       if (res?._id === navbarId) {
         setFormData({
-          logo: res.logo || "",
+          logo_white: res.logo_white || "",
+          logo_black: res.logo_black || "",
           navlinks:
             Array.isArray(res.navlinks) && res.navlinks.length > 0
               ? res.navlinks
@@ -158,7 +163,7 @@ const NavbarForm = () => {
           </h1>
 
           <div>
-            <label className="block font-medium mb-2">Logo</label>
+            <label className="block font-medium mb-2">Logo light</label>
             <div className="flex items-center gap-2">
               <label className="bg-blue-600 text-white px-4 py-2 rounded cursor-pointer">
                 {loading ? "Uploading..." : "Upload"}
@@ -171,17 +176,47 @@ const NavbarForm = () => {
               </label>
               <input
                 type="text"
-                name="logo"
-                value={formData.logo}
+                name="logo_white"
+                value={formData.logo_white}
                 onChange={handleInputChange}
                 placeholder="Or paste image URL"
                 className="flex-1 border rounded p-2"
               />
             </div>
-            {formData.logo && (
+            {formData.logo_white && (
               <img
-                src={formData.logo}
-                alt="Logo"
+                src={formData.logo_white}
+                alt="Logo_white"
+                className="w-24 h-24 mt-2 object-cover border rounded"
+              />
+            )}
+          </div>
+
+          <div>
+            <label className="block font-medium mb-2">Logo dark</label>
+            <div className="flex items-center gap-2">
+              <label className="bg-gray-800 text-white px-4 py-2 rounded cursor-pointer">
+                {loading ? "Uploading..." : "Upload"}
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={handleFileUpload}
+                />
+              </label>
+              <input
+                type="text"
+                name="logo_black"
+                value={formData.logo_black}
+                onChange={handleInputChange}
+                placeholder="Or paste image URL"
+                className="flex-1 border rounded p-2"
+              />
+            </div>
+            {formData.logo_black && (
+              <img
+                src={formData.logo_black}
+                alt="Dark Logo"
                 className="w-24 h-24 mt-2 object-cover border rounded"
               />
             )}
