@@ -11,6 +11,11 @@ const nextConfig = {
     config.resolve.symlinks = false;
     return config;
   },
+
+  // Add this for Next.js 13+ App Router support
+  experimental: {
+    appDir: true,
+  },
 };
 
 export default nextConfig;
