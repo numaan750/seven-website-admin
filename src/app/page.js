@@ -106,7 +106,7 @@ const defaultView = searchParams?.get("activeView") || "Navbar"; // default Navb
                 activeView === "Calendar" ? "bg-gray-200 font-semibold" : ""
               }`}
             >
-              {open && <span>Servies</span>}
+              {open && <span>servies</span>}
             </button>
 
             <button
