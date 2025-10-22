@@ -303,7 +303,7 @@ useEffect(() => {
 
   const createServies = async (data) => {
     try {
-      const response = await fetch(`${backendUrl}/serviesmodels`, {
+      const response = await fetch(`${backendUrl}/servicemodels`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
@@ -319,7 +319,7 @@ useEffect(() => {
   };
 
   const updateServies = async (id, data) => {
-    const response = await fetch(`${backendUrl}/serviesmodels/${id}`, {
+    const response = await fetch(`${backendUrl}/servicemodels/${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
@@ -330,7 +330,7 @@ useEffect(() => {
   const deleteServies = async (id) => {
     if (!id) throw new Error("No ID provided to deleteServies");
     try {
-      const response = await fetch(`${backendUrl}/serviesmodels/${id}`, {
+      const response = await fetch(`${backendUrl}/servicemodels/${id}`, {
         method: "DELETE",
       });
 
