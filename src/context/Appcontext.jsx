@@ -292,7 +292,7 @@ useEffect(() => {
   //servies  api
   const getServies = async () => {
     try {
-      const response = await fetch(`${backendUrl}/serviesmodels`);
+      const response = await fetch(`${backendUrl}/servicemodels`);
       if (!response.ok) throw new Error("API error " + response.status);
       return await response.json();
     } catch (error) {
