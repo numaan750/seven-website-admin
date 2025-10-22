@@ -14,14 +14,18 @@ import Reviews from "@/component/reviews/Reviews";
 import User from "@/component/user/User";
 
 import { Appcontext } from "@/context/Appcontext";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 export default function SimpleSidebarLayout() {
   const [open, setopen] = useState(true);
   const { token, user, logout } = useContext(Appcontext);
 
-  const searchParams = useSearchParams(); // call hook correctly
-  const defaultView = searchParams.get("activeView") || "Navbar"; // default Navbar
+  let searchParams;
+if (typeof window !== "undefined") {
+  searchParams = new URLSearchParams(window.location.search);
+}
+const defaultView = searchParams?.get("activeView") || "Navbar"; // default Navbar
+
   const [activeView, setActiveView] = useState(defaultView);
 
   const router = useRouter();
