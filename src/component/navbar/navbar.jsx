@@ -7,17 +7,20 @@ const NavbarForm = () => {
     useContext(Appcontext);
 
   const emptyForm = {
-    logo_white:"",
+    logo_white: "",
     logo_black: "",
-    navlinks: [{ link: "" }], 
+    navlinks: [{ link: "" }],
   };
 
   const [formData, setFormData] = useState({ ...emptyForm });
   const [isEditMode, setIsEditMode] = useState(false);
   const [navbarId, setNavbarId] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [uploading, setUploading] = useState({
+    white: false,
+    black: false,
+  });
 
-  const handleFileUpload = async (e) => {
+  const handleFileUpload = async (e, field) => {
     const file = e.target.files[0];
     if (!file) return;
 
@@ -28,23 +31,29 @@ const NavbarForm = () => {
     uploadForm.append("upload_preset", UPLOAD_PRESET);
 
     try {
-      setLoading(true);
+      setUploading((prev) => ({
+        ...prev,
+        [field === "logo_white" ? "white" : "black"]: true,
+      }));
+
       const res = await fetch(
         `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`,
         { method: "POST", body: uploadForm }
       );
       const data = await res.json();
-      if (data.secure_url) {
-        setFormData((prev) => ({
-          ...prev,
-          logo: data.secure_url,
-        }));
-      }
+
+      setFormData((prev) => ({
+        ...prev,
+        [field]: data.secure_url,
+      }));
     } catch (err) {
       console.error("Upload error:", err);
       alert("Image upload failed");
     } finally {
-      setLoading(false);
+      setUploading((prev) => ({
+        ...prev,
+        [field === "logo_white" ? "white" : "black"]: false,
+      }));
     }
   };
 
@@ -166,12 +175,12 @@ const NavbarForm = () => {
             <label className="block font-medium mb-2">Logo light</label>
             <div className="flex items-center gap-2">
               <label className="bg-blue-600 text-white px-4 py-2 rounded cursor-pointer">
-                {loading ? "Uploading..." : "Upload"}
+                {uploading.white ? "Uploading..." : "Upload"}
                 <input
                   type="file"
                   accept="image/*"
                   className="hidden"
-                  onChange={handleFileUpload}
+                  onChange={(e) => handleFileUpload(e, "logo_white")}
                 />
               </label>
               <input
@@ -196,12 +205,12 @@ const NavbarForm = () => {
             <label className="block font-medium mb-2">Logo dark</label>
             <div className="flex items-center gap-2">
               <label className="bg-gray-800 text-white px-4 py-2 rounded cursor-pointer">
-                {loading ? "Uploading..." : "Upload"}
+                {uploading.black ? "Uploading..." : "Upload"}
                 <input
                   type="file"
                   accept="image/*"
                   className="hidden"
-                  onChange={handleFileUpload}
+                  onChange={(e) => handleFileUpload(e, "logo_black")}
                 />
               </label>
               <input

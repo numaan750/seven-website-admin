@@ -22,7 +22,45 @@ const Footer = () => {
   const [formData, setFormData] = useState({ ...emptyForm });
   const [footerId, setFooterId] = useState(null);
   const [isEditMode, setIsEditMode] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  const handleFileUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const CLOUD_NAME = "dhtpqla2b";
+    const UPLOAD_PRESET = "unsigned_preset";
+
+    const uploadForm = new FormData();
+    uploadForm.append("file", file);
+    uploadForm.append("upload_preset", UPLOAD_PRESET);
+
+    try {
+      setUploading(true); 
+
+      const res = await fetch(
+        `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`,
+        { method: "POST", body: uploadForm }
+      );
+
+      if (!res.ok) throw new Error("Upload failed");
+
+      const data = await res.json();
+      setFormData((prev) => ({
+        ...prev,
+        section1: {
+          ...prev.section1,
+          logo: data.secure_url,
+        },
+      }));
+
+    } catch (err) {
+      console.error("Upload error:", err);
+    } finally {
+      setUploading(false);
+    }
+  };
 
   const handleInputChange = (e, section, index = null) => {
     const { name, value } = e.target;
@@ -55,39 +93,6 @@ const Footer = () => {
       return { ...prev, [section]: { ...prev[section], items: updatedItems } };
     });
   };
-
-const handleFileUpload = async (e) => {
-  const file = e.target.files[0]; // ✅ get the actual file
-  if (!file) return;
-
-  const uploadForm = new FormData();
-  uploadForm.append("file", file);
-  uploadForm.append("upload_preset", process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET);
-
-  try {
-    setLoading(true);
-
-    const res = await fetch(
-      `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUD_NAME}/upload`,
-      { method: "POST", body: uploadForm }
-    );
-
-    if (!res.ok) throw new Error("Cloudinary upload failed");
-
-    const data = await res.json();
-    console.log("Uploaded File Data:", data);
-
-    setFormData((prev) => ({
-      ...prev,
-      section1: { ...prev.section1, logo: data.secure_url },
-    }));
-  } catch (err) {
-    console.error("Error uploading file:", err);
-  } finally {
-    setLoading(false);
-  }
-};
-
 
   useEffect(() => {
     const fetchFooter = async () => {
@@ -206,10 +211,10 @@ const handleFileUpload = async (e) => {
             {isEditMode ? "Edit Footer" : "Create Footer"}
           </h1>
           <div>
-            <label className="block font-medium mb-2">Logo</label>
+            <label className="block font-medium mb-2">Footer Logo</label>
             <div className="flex items-center gap-2">
               <label className="bg-blue-600 text-white px-4 py-2 rounded cursor-pointer">
-                {loading ? "Uploading..." : "Upload"}
+                {uploading ? "Uploading..." : "Upload"}
                 <input
                   type="file"
                   accept="image/*"
@@ -217,19 +222,26 @@ const handleFileUpload = async (e) => {
                   onChange={handleFileUpload}
                 />
               </label>
+
               <input
                 type="text"
                 name="logo"
                 value={formData.section1.logo}
-                onChange={(e) => handleInputChange(e, "section1")}
+                onChange={(e) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    section1: { ...prev.section1, logo: e.target.value },
+                  }))
+                }
                 placeholder="Or paste image URL"
                 className="flex-1 border rounded p-2"
               />
             </div>
+
             {formData.section1.logo && (
               <img
                 src={formData.section1.logo}
-                alt="Logo"
+                alt="Footer Logo"
                 className="w-24 h-24 mt-2 object-cover border rounded"
               />
             )}
