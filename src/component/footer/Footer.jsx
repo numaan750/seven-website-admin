@@ -37,24 +37,16 @@ const Footer = () => {
     uploadForm.append("upload_preset", UPLOAD_PRESET);
 
     try {
-      setUploading(true); 
-
+      setUploading(true);
       const res = await fetch(
         `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`,
         { method: "POST", body: uploadForm }
       );
-
-      if (!res.ok) throw new Error("Upload failed");
-
       const data = await res.json();
       setFormData((prev) => ({
         ...prev,
-        section1: {
-          ...prev.section1,
-          logo: data.secure_url,
-        },
+        section1: { ...prev.section1, logo: data.secure_url },
       }));
-
     } catch (err) {
       console.error("Upload error:", err);
     } finally {
@@ -94,30 +86,15 @@ const Footer = () => {
     });
   };
 
-  useEffect(() => {
-    const fetchFooter = async () => {
-      try {
-        const res = await getFooter();
-        const footer = Array.isArray(res) ? res[0] : res;
-        if (footer) {
-          setFooterId(footer._id);
-          setIsEditMode(true);
-        }
-      } catch (err) {
-        console.error("Failed to fetch footer:", err);
-      }
-    };
-    fetchFooter();
-  }, []);
-
-  const loadForEdit = async () => {
+  const loadFooterData = async () => {
     try {
+      setLoading(true);
       const res = await getFooter();
       const footer = Array.isArray(res) ? res[0] : res;
 
       if (footer) {
         setFooterId(footer._id);
-
+        setIsEditMode(true);
         setFormData({
           section1: {
             logo: footer.section1?.logo || "",
@@ -125,61 +102,39 @@ const Footer = () => {
             text2: footer.section1?.text2 || "",
             buttontext: footer.section1?.buttontext || "",
           },
-          section2: {
-            title: footer.section2?.title || "COMPANY",
-            items:
-              footer.section2?.items?.length > 0
-                ? footer.section2.items.map((i) => ({
-                    text: i.text || "",
-                  }))
-                : [{ text: "" }],
-          },
-          section3: {
-            title: footer.section3?.title || "INFO",
-            items:
-              footer.section3?.items?.length > 0
-                ? footer.section3.items.map((i) => ({
-                    text: i.text || "",
-                  }))
-                : [{ text: "" }],
-          },
-          section4: {
-            title: footer.section4?.title || "CONNECT",
-            items:
-              footer.section4?.items?.length > 0
-                ? footer.section4.items.map((i) => ({
-                    text: i.text || "",
-                  }))
-                : [{ text: "" }],
-          },
+          section2: footer.section2 || emptyForm.section2,
+          section3: footer.section3 || emptyForm.section3,
+          section4: footer.section4 || emptyForm.section4,
           copywrittext: footer.copywrittext || "",
         });
-
-        setIsEditMode(true);
-        console.log(" Footer data loaded successfully!");
       }
-    } catch (error) {
-      console.error(" Error loading footer:", error);
+    } catch (err) {
+      console.error("Failed to fetch footer:", err);
+    } finally {
+      setLoading(false);
     }
   };
 
+  useEffect(() => {
+    loadFooterData();
+  }, []);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
     try {
-      setLoading(true);
       if (isEditMode && footerId) {
         await updateFooter(footerId, formData);
-        alert(" Footer updated successfully!");
       } else {
         const res = await createFooter(formData);
-        setFooterId(res._id);
-        setIsEditMode(true);
-        alert(" Footer created successfully!");
+        if (res?._id) {
+          setFooterId(res._id);
+          setIsEditMode(true);
+        }
       }
-      setFormData({ ...emptyForm });
+      await loadFooterData();
     } catch (err) {
       console.error("Submit error:", err);
-      alert(" Failed to save footer");
     } finally {
       setLoading(false);
     }
@@ -188,6 +143,8 @@ const Footer = () => {
   const handleDelete = async () => {
     if (!footerId) return alert("Nothing to delete");
     if (!confirm("Are you sure you want to delete the footer?")) return;
+
+    setLoading(true);
     try {
       await deleteFooter(footerId);
       alert("🗑️ Footer deleted successfully!");
@@ -196,228 +153,164 @@ const Footer = () => {
       setIsEditMode(false);
     } catch (err) {
       console.error("Delete error:", err);
-      alert(" Failed to delete footer");
+      alert("Failed to delete footer");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="w-full min-h-screen bg-blue-950 overflow-auto py-10">
+    <div className="w-full min-h-screen bg-blue-950 py-10 flex justify-center items-center">
       <div className="w-full max-w-full mx-auto px-6">
-        <form
-          onSubmit={handleSubmit}
-          className="w-full bg-white shadow-lg rounded-xl p-8 space-y-6"
-        >
-          <h1 className="text-3xl font-bold text-center mb-6">
-            {isEditMode ? "Edit Footer" : "Create Footer"}
-          </h1>
-          <div>
-            <label className="block font-medium mb-2">Footer Logo</label>
-            <div className="flex items-center gap-2">
-              <label className="bg-blue-600 text-white px-4 py-2 rounded cursor-pointer">
-                {uploading ? "Uploading..." : "Upload"}
+        <div className="bg-white shadow-lg rounded-xl p-8 relative min-h-[500px] flex items-center justify-center">
+          {loading ? (
+            <div className="flex flex-col items-center justify-center w-full h-full absolute inset-0 bg-white/80 backdrop-blur-sm z-10">
+              <div className="w-16 h-16 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mb-3"></div>
+              <p className="text-blue-700 font-semibold">Processing...</p>
+            </div>
+          ) : (
+            <form
+              onSubmit={handleSubmit}
+              className="w-full space-y-6 overflow-y-auto max-h-[85vh] p-2"
+            >
+              <h1 className="text-3xl font-bold text-center mb-4">
+                {isEditMode ? "Edit Footer" : "Create Footer"}
+              </h1>
+
+              <div>
+                <label className="block font-medium mb-2">Footer Logo</label>
+                <div className="flex items-center gap-2">
+                  <label className="bg-blue-600 text-white px-4 py-2 rounded cursor-pointer">
+                    {uploading ? "Uploading..." : "Upload"}
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={handleFileUpload}
+                    />
+                  </label>
+                  <input
+                    type="text"
+                    name="logo"
+                    value={formData.section1.logo}
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        section1: {
+                          ...prev.section1,
+                          logo: e.target.value,
+                        },
+                      }))
+                    }
+                    placeholder="Or paste image URL"
+                    className="flex-1 border rounded p-2"
+                  />
+                </div>
+                {formData.section1.logo && (
+                  <img
+                    src={formData.section1.logo}
+                    alt="Footer Logo"
+                    className="w-24 h-24 mt-2 object-cover border rounded"
+                  />
+                )}
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <input
-                  type="file"
-                  accept="image/*"
-                  className="hidden"
-                  onChange={handleFileUpload}
+                  type="text"
+                  name="text1"
+                  value={formData.section1.text1}
+                  onChange={(e) => handleInputChange(e, "section1")}
+                  placeholder="Text 1"
+                  className="border p-2 rounded"
                 />
-              </label>
+                <input
+                  type="text"
+                  name="text2"
+                  value={formData.section1.text2}
+                  onChange={(e) => handleInputChange(e, "section1")}
+                  placeholder="Text 2"
+                  className="border p-2 rounded"
+                />
+              </div>
 
               <input
                 type="text"
-                name="logo"
-                value={formData.section1.logo}
-                onChange={(e) =>
-                  setFormData((prev) => ({
-                    ...prev,
-                    section1: { ...prev.section1, logo: e.target.value },
-                  }))
-                }
-                placeholder="Or paste image URL"
-                className="flex-1 border rounded p-2"
+                name="buttontext"
+                value={formData.section1.buttontext}
+                onChange={(e) => handleInputChange(e, "section1")}
+                placeholder="Button Text"
+                className="w-full border p-2 rounded"
               />
-            </div>
 
-            {formData.section1.logo && (
-              <img
-                src={formData.section1.logo}
-                alt="Footer Logo"
-                className="w-24 h-24 mt-2 object-cover border rounded"
-              />
-            )}
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <input
-              type="text"
-              name="text1"
-              value={formData.section1.text1}
-              onChange={(e) => handleInputChange(e, "section1")}
-              placeholder="Text 1"
-              className="border p-2 rounded"
-            />
-            <input
-              type="text"
-              name="text2"
-              value={formData.section1.text2}
-              onChange={(e) => handleInputChange(e, "section1")}
-              placeholder="Text 2"
-              className="border p-2 rounded"
-            />
-          </div>
-          <input
-            type="text"
-            name="buttontext"
-            value={formData.section1.buttontext}
-            onChange={(e) => handleInputChange(e, "section1")}
-            placeholder="Button Text"
-            className="w-full border p-2 rounded"
-          />
-
-          <div className="mb-6">
-            <h2 className="text-lg font-semibold border-b mb-2">
-              {formData.section2.title}
-            </h2>
-            {formData.section2.items.map((item, i) => (
-              <div key={i} className="flex gap-2 mb-2">
-                <input
-                  type="text"
-                  value={item.text}
-                  onChange={(e) => handleInputChange(e, "section2", i)}
-                  placeholder="Enter company link"
-                  className="flex-1 border p-2 rounded"
-                />
-                {formData.section2.items.length > 1 && (
+              {["section2", "section3", "section4"].map((section, idx) => (
+                <div key={idx} className="mb-6">
+                  <h2 className="text-lg font-semibold border-b mb-2">
+                    {formData[section].title}
+                  </h2>
+                  {formData[section].items.map((item, i) => (
+                    <div key={i} className="flex gap-2 mb-2">
+                      <input
+                        type="text"
+                        value={item.text}
+                        onChange={(e) => handleInputChange(e, section, i)}
+                        placeholder={`Enter ${formData[section].title} link`}
+                        className="flex-1 border p-2 rounded"
+                      />
+                      {formData[section].items.length > 1 && (
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveLink(section, i)}
+                          className="bg-red-500 text-white px-3 rounded"
+                        >
+                          ✕
+                        </button>
+                      )}
+                    </div>
+                  ))}
                   <button
                     type="button"
-                    onClick={() => handleRemoveLink("section2", i)}
-                    className="bg-red-500 text-white px-3 rounded"
+                    onClick={() => handleAddLink(section)}
+                    className="bg-blue-500 text-white px-3 py-1 rounded text-sm"
                   >
-                    ✕
+                    + Add {formData[section].title} Link
                   </button>
-                )}
-              </div>
-            ))}
-            <button
-              type="button"
-              onClick={() => handleAddLink("section2")}
-              className="bg-blue-500 text-white px-3 py-1 rounded text-sm"
-            >
-              + Add Company Link
-            </button>
-          </div>
+                </div>
+              ))}
 
-          <div className="mb-6">
-            <h2 className="text-lg font-semibold border-b mb-2">
-              {formData.section3.title}
-            </h2>
-            {formData.section3.items.map((item, i) => (
-              <div key={i} className="flex gap-2 mb-2">
+              <div>
+                <label className="block font-medium mb-2">Copyright Text</label>
                 <input
                   type="text"
-                  value={item.text}
-                  onChange={(e) => handleInputChange(e, "section3", i)}
-                  placeholder="Enter info link"
-                  className="flex-1 border p-2 rounded"
+                  name="copywrittext"
+                  value={formData.copywrittext}
+                  onChange={handleInputChange}
+                  placeholder="© 2025 The Seven | All Rights Reserved"
+                  className="w-full border p-2 rounded"
                 />
-                {formData.section3.items.length > 1 && (
-                  <button
-                    type="button"
-                    onClick={() => handleRemoveLink("section3", i)}
-                    className="bg-red-500 text-white px-3 rounded"
-                  >
-                    ✕
-                  </button>
-                )}
               </div>
-            ))}
-            <button
-              type="button"
-              onClick={() => handleAddLink("section3")}
-              className="bg-blue-500 text-white px-3 py-1 rounded text-sm"
-            >
-              + Add Info Link
-            </button>
-          </div>
 
-          <div className="mb-6">
-            <h2 className="text-lg font-semibold border-b mb-2">
-              {formData.section4.title}
-            </h2>
-            {formData.section4.items.map((item, i) => (
-              <div key={i} className="flex gap-2 mb-2">
-                <input
-                  type="text"
-                  value={item.text}
-                  onChange={(e) => handleInputChange(e, "section4", i)}
-                  placeholder="Enter social link"
-                  className="flex-1 border p-2 rounded"
-                />
-                {formData.section4.items.length > 1 && (
-                  <button
-                    type="button"
-                    onClick={() => handleRemoveLink("section4", i)}
-                    className="bg-red-500 text-white px-3 rounded"
-                  >
-                    ✕
-                  </button>
-                )}
-              </div>
-            ))}
-            <button
-              type="button"
-              onClick={() => handleAddLink("section4")}
-              className="bg-blue-500 text-white px-3 py-1 rounded text-sm"
-            >
-              + Add Connect Link
-            </button>
-          </div>
-
-          <div>
-            <label className="block font-medium mb-2">Copyright Text</label>
-            <input
-              type="text"
-              name="copywrittext"
-              value={formData.copywrittext}
-              onChange={handleInputChange}
-              placeholder="© 2025 The Seven | All Rights Reserved"
-              className="w-full border p-2 rounded"
-            />
-          </div>
-
-          <div className="flex gap-4 pt-4">
-            <button
-              type="submit"
-              disabled={loading}
-              className="bg-blue-600 text-white px-6 py-2 rounded font-semibold hover:bg-blue-700"
-            >
-              {loading
-                ? "Saving..."
-                : isEditMode
-                ? "Update Footer"
-                : "Create Footer"}
-            </button>
-
-            {isEditMode && (
-              <>
+              <div className="flex gap-4 pt-4">
                 <button
-                  type="button"
-                  onClick={loadForEdit}
-                  className="bg-yellow-500 text-white px-6 py-2 rounded font-semibold hover:bg-yellow-600"
+                  type="submit"
+                  className="w-[25%] bg-blue-600 text-white py-3 rounded-lg text-lg font-semibold hover:bg-blue-700 transition-all"
                 >
-                  Load for Edit
+                  {isEditMode ? "Update" : "Create"}
                 </button>
-                <button
-                  type="button"
-                  onClick={handleDelete}
-                  className="bg-red-600 text-white px-6 py-2 rounded font-semibold hover:bg-red-700"
-                >
-                  Delete
-                </button>
-              </>
-            )}
-          </div>
-        </form>
+
+                {isEditMode && (
+                  <button
+                    type="button"
+                    onClick={handleDelete}
+                    className="w-[25%] bg-red-600 text-white py-3 rounded-lg text-lg font-semibold hover:bg-red-700 transition-all"
+                  >
+                    Delete
+                  </button>
+                )}
+              </div>
+            </form>
+          )}
+        </div>
       </div>
     </div>
   );
