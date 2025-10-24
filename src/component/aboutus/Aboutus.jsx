@@ -139,7 +139,7 @@ const Aboutus = () => {
 
   return (
     <div className="w-full min-h-screen bg-blue-950 py-8 overflow-y-auto flex items-center justify-center">
-      <div className="max-w-full mx-auto px-6 w-full">
+      <div className="max-w-full h-screen mx-auto px-6 w-full">
         <div className="w-full bg-white shadow-md rounded-lg p-6 relative min-h-[500px] flex items-center justify-center">
           {loading ? (
             <div className="flex flex-col items-center justify-center w-full h-full">
