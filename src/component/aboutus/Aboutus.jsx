@@ -94,27 +94,36 @@ const Aboutus = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const submitForm = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    try {
-      if (IsEditMode && AboutusId) {
-        await updateAboutus(AboutusId, formData);
-      } else {
-        const res = await createAboutus(formData);
-        if (res?._id) {
-          setAboutusId(res._id);
-          setIsEditMode(true);
-        }
+const submitForm = async (e) => {
+  e.preventDefault();
+  setLoading(true);
+  try {
+    if (IsEditMode && AboutusId) {
+      const updated = await updateAboutus(AboutusId, formData);
+      if (updated) {
+        setFormData((prev) => ({
+          ...prev,
+          ...updated, // merge updated data into current form
+        }));
       }
-
-      setFormData((prev) => ({ ...prev, mainimg: "" }));
-    } catch (err) {
-      console.error("Error submitting Aboutus section:", err);
-    } finally {
-      setLoading(false);
+    } else {
+      const res = await createAboutus(formData);
+      if (res?._id) {
+        setAboutusId(res._id);
+        setIsEditMode(true);
+        setFormData((prev) => ({
+          ...prev,
+          ...res, // merge created record into current form
+        }));
+      }
     }
-  };
+  } catch (err) {
+    console.error("Error submitting Aboutus section:", err);
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   const handleDelete = async () => {
     if (!AboutusId) return alert("Nothing to delete");
