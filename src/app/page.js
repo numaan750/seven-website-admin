@@ -52,7 +52,7 @@ export default function SimpleSidebarLayout() {
     <div className="h-screen flex bg-gray-50 font-sans">
       <aside className="w-65 bg-white shadow-lg p-6 flex flex-col">
         <div className="flex items-center">
-          <div className="h-20 w-20 relative">
+          <div className="h-25 w-25 relative">
             <Image
               src="/Logo-black.png"
               alt="logo"
