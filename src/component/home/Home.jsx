@@ -3,7 +3,8 @@ import { Appcontext } from "@/context/Appcontext";
 import React, { useContext, useEffect, useState } from "react";
 
 const Home = () => {
-  const { getHome, createHome, updateHome, deleteHome } = useContext(Appcontext);
+  const { getHome, createHome, updateHome, deleteHome } =
+    useContext(Appcontext);
 
   const emptyForm = {
     backgroundimg: "",
@@ -18,7 +19,7 @@ const Home = () => {
   const [HomeId, setHomeId] = useState(null);
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
-  const [previewImg, setPreviewImg] = useState(""); 
+  const [previewImg, setPreviewImg] = useState("");
 
   const handleFileUpload = async (e, fieldName) => {
     const file = e.target.files[0];
@@ -33,10 +34,13 @@ const Home = () => {
 
     try {
       setUploading(true);
-      const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, {
-        method: "POST",
-        body: uploadForm,
-      });
+      const res = await fetch(
+        `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`,
+        {
+          method: "POST",
+          body: uploadForm,
+        }
+      );
       const data = await res.json();
 
       setFormData((prev) => ({ ...prev, [fieldName]: data.secure_url }));
@@ -64,7 +68,7 @@ const Home = () => {
             buttontext1: homeData.buttontext1 || "",
             buttontext2: homeData.buttontext2 || "",
           });
-          setPreviewImg(homeData.backgroundimg || ""); 
+          setPreviewImg(homeData.backgroundimg || "");
         }
       } catch (err) {
         console.error("Failed to fetch Home data:", err);
@@ -83,16 +87,25 @@ const Home = () => {
     setLoading(true);
     try {
       if (IsEditMode && HomeId) {
-        await updateHome(HomeId, formData);
+        const updated = await updateHome(HomeId, formData);
+        if (updated) {
+          // refresh current form state with new backend data
+          setFormData((prev) => ({
+            ...prev,
+            ...updated, // merge updated fields
+          }));
+        }
       } else {
         const res = await createHome(formData);
         if (res?._id) {
           setHomeId(res._id);
           setIsEditMode(true);
+          setFormData((prev) => ({
+            ...prev,
+            ...res, // merge created document back into form
+          }));
         }
       }
-
-      setFormData((prev) => ({ ...prev, backgroundimg: "" }));
     } catch (err) {
       console.error("Error submitting Home section:", err);
     } finally {
@@ -111,7 +124,7 @@ const Home = () => {
       setFormData({ ...emptyForm });
       setHomeId(null);
       setIsEditMode(false);
-      setPreviewImg(""); 
+      setPreviewImg("");
     } catch (err) {
       console.error("Error deleting Home section:", err);
       alert("Failed to delete Home section!");
@@ -136,7 +149,9 @@ const Home = () => {
               </h1>
 
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-1">Main Heading</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-1">
+                  Main Heading
+                </label>
                 <input
                   type="text"
                   name="heading"
@@ -148,7 +163,9 @@ const Home = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-1">Paragraph</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-1">
+                  Paragraph
+                </label>
                 <textarea
                   name="paragraph"
                   value={formData.paragraph}
@@ -161,7 +178,9 @@ const Home = () => {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-1">Button text 1</label>
+                  <label className="block text-sm font-semibold text-gray-700 mb-1">
+                    Button text 1
+                  </label>
                   <input
                     type="text"
                     name="buttontext1"
@@ -173,7 +192,9 @@ const Home = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-1">Button text 2</label>
+                  <label className="block text-sm font-semibold text-gray-700 mb-1">
+                    Button text 2
+                  </label>
                   <input
                     type="text"
                     name="buttontext2"
@@ -186,7 +207,9 @@ const Home = () => {
               </div>
 
               <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 mb-2">Background Image</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Background Image
+                </label>
                 <div className="flex items-center gap-2">
                   <label className="cursor-pointer bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600">
                     {uploading ? "Uploading..." : "Upload File"}
