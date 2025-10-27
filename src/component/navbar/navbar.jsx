@@ -3,7 +3,8 @@ import { Appcontext } from "@/context/Appcontext";
 import React, { useContext, useEffect, useState } from "react";
 
 const NavbarForm = () => {
-  const { getNavbar, createNavbar, updateNavbar, deleteNavbar } = useContext(Appcontext);
+  const { getNavbar, createNavbar, updateNavbar, deleteNavbar } =
+    useContext(Appcontext);
 
   const emptyForm = {
     logo_white: "",
@@ -31,12 +32,18 @@ const NavbarForm = () => {
     uploadForm.append("upload_preset", UPLOAD_PRESET);
 
     try {
-      setUploading((prev) => ({ ...prev, [field === "logo_white" ? "white" : "black"]: true }));
+      setUploading((prev) => ({
+        ...prev,
+        [field === "logo_white" ? "white" : "black"]: true,
+      }));
 
-      const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, {
-        method: "POST",
-        body: uploadForm,
-      });
+      const res = await fetch(
+        `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`,
+        {
+          method: "POST",
+          body: uploadForm,
+        }
+      );
       const data = await res.json();
 
       setFormData((prev) => ({ ...prev, [field]: data.secure_url }));
@@ -46,8 +53,11 @@ const NavbarForm = () => {
     } catch (err) {
       console.error("Upload error:", err);
     } finally {
-      setUploading((prev) => ({ ...prev, [field === "logo_white" ? "white" : "black"]: false }));
-      e.target.value = ""; 
+      setUploading((prev) => ({
+        ...prev,
+        [field === "logo_white" ? "white" : "black"]: false,
+      }));
+      e.target.value = "";
     }
   };
 
@@ -66,7 +76,10 @@ const NavbarForm = () => {
           setFormData({
             logo_white: res.logo_white || "",
             logo_black: res.logo_black || "",
-            navlinks: Array.isArray(res.navlinks) && res.navlinks.length > 0 ? res.navlinks : [{ link: "" }],
+            navlinks:
+              Array.isArray(res.navlinks) && res.navlinks.length > 0
+                ? res.navlinks
+                : [{ link: "" }],
           });
 
           setPreviewWhite(res.logo_white || "");
@@ -86,12 +99,18 @@ const NavbarForm = () => {
   };
 
   const addNavlink = () => {
-    setFormData({ ...formData, navlinks: [...formData.navlinks, { link: "" }] });
+    setFormData({
+      ...formData,
+      navlinks: [...formData.navlinks, { link: "" }],
+    });
   };
 
   const removeNavlink = (index) => {
     const newNavlinks = formData.navlinks.filter((_, i) => i !== index);
-    setFormData({ ...formData, navlinks: newNavlinks.length ? newNavlinks : [{ link: "" }] });
+    setFormData({
+      ...formData,
+      navlinks: newNavlinks.length ? newNavlinks : [{ link: "" }],
+    });
   };
 
   const submitForm = async (e) => {
@@ -99,20 +118,36 @@ const NavbarForm = () => {
     setLoading(true);
     try {
       if (isEditMode && navbarId) {
-        await updateNavbar(navbarId, formData);
+        const updated = await updateNavbar(navbarId, formData);
+        if (updated) {
+          setFormData({
+            logo_white: updated.logo_white || "",
+            logo_black: updated.logo_black || "",
+            navlinks:
+              Array.isArray(updated.navlinks) && updated.navlinks.length > 0
+                ? updated.navlinks
+                : [{ link: "" }],
+          });
+          setPreviewWhite(updated.logo_white || "");
+          setPreviewBlack(updated.logo_black || "");
+        }
       } else {
         const res = await createNavbar(formData);
         if (res?._id) {
           setNavbarId(res._id);
           setIsEditMode(true);
+          setFormData({
+            logo_white: res.logo_white || "",
+            logo_black: res.logo_black || "",
+            navlinks:
+              Array.isArray(res.navlinks) && res.navlinks.length > 0
+                ? res.navlinks
+                : [{ link: "" }],
+          });
+          setPreviewWhite(res.logo_white || "");
+          setPreviewBlack(res.logo_black || "");
         }
       }
-
-      setFormData((prev) => ({
-        ...prev,
-        logo_white: "",
-        logo_black: "",
-      }));
     } catch (err) {
       console.error("Error submitting Navbar:", err);
     } finally {
@@ -122,7 +157,8 @@ const NavbarForm = () => {
 
   const handleDelete = async () => {
     if (!navbarId) return alert("No Navbar found to delete!");
-    if (!confirm("Are you sure you want to delete this Navbar section?")) return;
+    if (!confirm("Are you sure you want to delete this Navbar section?"))
+      return;
 
     setLoading(true);
     try {
@@ -217,7 +253,9 @@ const NavbarForm = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-3">Navigation Links</label>
+                <label className="block text-sm font-medium text-gray-700 mb-3">
+                  Navigation Links
+                </label>
                 <button
                   type="button"
                   onClick={addNavlink}
@@ -232,7 +270,9 @@ const NavbarForm = () => {
                       <input
                         type="text"
                         value={nav.link}
-                        onChange={(e) => handleNavlinkChange(index, e.target.value)}
+                        onChange={(e) =>
+                          handleNavlinkChange(index, e.target.value)
+                        }
                         placeholder={`Link ${index + 1}`}
                         className="w-full p-3 border border-gray-300 rounded-lg"
                         required
