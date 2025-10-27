@@ -20,10 +20,10 @@ export default function SimpleSidebarLayout() {
   const { token, user, logout } = useContext(Appcontext);
 
   let searchParams;
-if (typeof window !== "undefined") {
-  searchParams = new URLSearchParams(window.location.search);
-}
-const defaultView = searchParams?.get("activeView") || "Navbar"; // default Navbar
+  if (typeof window !== "undefined") {
+    searchParams = new URLSearchParams(window.location.search);
+  }
+  const defaultView = searchParams?.get("activeView") || "Navbar"; // default Navbar
 
   const [activeView, setActiveView] = useState(defaultView);
 
@@ -66,8 +66,8 @@ const defaultView = searchParams?.get("activeView") || "Navbar"; // default Navb
           <ul className="space-y-2">
             <button
               onClick={() => setActiveView("Navbar")}
-              className={`flex items-start gap-3 text-gray-600 hover:bg-gray-100 p-2 rounded-lg w-full text-left ${
-                activeView === "Navbar" ? "bg-gray-200 font-semibold" : ""
+              className={`flex items-start gap-3 text-black hover:bg-blue-200 p-2 rounded-lg w-full text-left ${
+                activeView === "Navbar" ? "bg-blue-200 font-semibold" : ""
               }`}
             >
               {open && <span>Navbar</span>}
@@ -75,8 +75,8 @@ const defaultView = searchParams?.get("activeView") || "Navbar"; // default Navb
 
             <button
               onClick={() => setActiveView("Home")}
-              className={`flex items-start gap-3 text-gray-600 hover:bg-gray-100 p-2 rounded-lg w-full text-left ${
-                activeView === "Profile" ? "bg-gray-200 font-semibold" : ""
+              className={`flex items-start gap-3 text-black hover:bg-blue-200 p-2 rounded-lg w-full text-left ${
+                activeView === "Home" ? "bg-blue-200 font-semibold" : ""
               }`}
             >
               {open && <span>Home</span>}
@@ -84,8 +84,8 @@ const defaultView = searchParams?.get("activeView") || "Navbar"; // default Navb
 
             <button
               onClick={() => setActiveView("Aboutus")}
-              className={`flex items-start gap-3 text-gray-600 hover:bg-gray-100 p-2 rounded-lg w-full text-left ${
-                activeView === "Messages" ? "bg-gray-200 font-semibold" : ""
+              className={`flex items-start gap-3 text-black hover:bg-blue-200 p-2 rounded-lg w-full text-left ${
+                activeView === "Aboutus" ? "bg-blue-200 font-semibold" : ""
               }`}
             >
               {open && <span>Aboutus</span>}
@@ -93,8 +93,8 @@ const defaultView = searchParams?.get("activeView") || "Navbar"; // default Navb
 
             <button
               onClick={() => setActiveView("Componies")}
-              className={`flex items-start gap-3 text-gray-600 hover:bg-gray-100 p-2 rounded-lg w-full text-left ${
-                activeView === "Projects" ? "bg-gray-200 font-semibold" : ""
+              className={`flex items-start gap-3 text-black hover:bg-blue-200 p-2 rounded-lg w-full text-left ${
+                activeView === "Componies" ? "bg-blue-200 font-semibold" : ""
               }`}
             >
               {open && <span>Componies</span>}
@@ -102,8 +102,8 @@ const defaultView = searchParams?.get("activeView") || "Navbar"; // default Navb
 
             <button
               onClick={() => setActiveView("Servies")}
-              className={`flex items-start gap-3 text-gray-600 hover:bg-gray-100 p-2 rounded-lg w-full text-left ${
-                activeView === "Calendar" ? "bg-gray-200 font-semibold" : ""
+              className={`flex items-start gap-3 text-black hover:bg-blue-200 p-2 rounded-lg w-full text-left ${
+                activeView === "Servies" ? "bg-blue-200 font-semibold" : ""
               }`}
             >
               {open && <span>servies</span>}
@@ -111,8 +111,8 @@ const defaultView = searchParams?.get("activeView") || "Navbar"; // default Navb
 
             <button
               onClick={() => setActiveView("Worksection")}
-              className={`flex items-start gap-3 text-gray-600 hover:bg-gray-100 p-2 rounded-lg w-full text-left ${
-                activeView === "Reports" ? "bg-gray-200 font-semibold" : ""
+              className={`flex items-start gap-3 text-black hover:bg-blue-200 p-2 rounded-lg w-full text-left ${
+                activeView === "Worksection" ? "bg-blue-200 font-semibold" : ""
               }`}
             >
               {open && <span>Worksection</span>}
@@ -120,8 +120,8 @@ const defaultView = searchParams?.get("activeView") || "Navbar"; // default Navb
 
             <button
               onClick={() => setActiveView("Joinus")}
-              className={`flex items-start gap-3 text-gray-600 hover:bg-gray-100 p-2 rounded-lg w-full text-left ${
-                activeView === "Settings" ? "bg-gray-200 font-semibold" : ""
+              className={`flex items-start gap-3 text-black hover:bg-blue-200 p-2 rounded-lg w-full text-left ${
+                activeView === "Joinus" ? "bg-blue-200 font-semibold" : ""
               }`}
             >
               {open && <span>Joinus</span>}
@@ -129,8 +129,8 @@ const defaultView = searchParams?.get("activeView") || "Navbar"; // default Navb
 
             <button
               onClick={() => setActiveView("Reviews")}
-              className={`flex items-start gap-3 text-gray-600 hover:bg-gray-100 p-2 rounded-lg w-full text-left ${
-                activeView === "Billing" ? "bg-gray-200 font-semibold" : ""
+              className={`flex items-start gap-3 text-black hover:bg-blue-200 p-2 rounded-lg w-full text-left ${
+                activeView === "Reviews" ? "bg-blue-200 font-semibold" : ""
               }`}
             >
               {open && <span>Reviews</span>}
@@ -138,8 +138,8 @@ const defaultView = searchParams?.get("activeView") || "Navbar"; // default Navb
 
             <button
               onClick={() => setActiveView("Blogs")}
-              className={`flex items-start gap-3 text-gray-600 hover:bg-gray-100 p-2 rounded-lg w-full text-left ${
-                activeView === "Help" ? "bg-gray-200 font-semibold" : ""
+              className={`flex items-start gap-3 text-black hover:bg-blue-200 p-2 rounded-lg w-full text-left ${
+                activeView === "Blogs" ? "bg-blue-200 font-semibold" : ""
               }`}
             >
               {open && <span>Blogs</span>}
@@ -147,8 +147,8 @@ const defaultView = searchParams?.get("activeView") || "Navbar"; // default Navb
 
             <button
               onClick={() => setActiveView("Footer")}
-              className={`flex items-start gap-3 text-gray-600 hover:bg-gray-100 p-2 rounded-lg w-full text-left ${
-                activeView === "Help" ? "bg-gray-200 font-semibold" : ""
+              className={`flex items-start gap-3 text-black hover:bg-blue-200 p-2 rounded-lg w-full text-left ${
+                activeView === "Footer" ? "bg-blue-200 font-semibold" : ""
               }`}
             >
               {open && <span>Footer</span>}
