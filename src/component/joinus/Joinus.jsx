@@ -175,7 +175,7 @@ const Joinus = () => {
                 />
               </div>
 
-              <div>
+              {/* <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-1">
                   Paragraph
                 </label>
@@ -187,7 +187,7 @@ const Joinus = () => {
                   rows="4"
                   className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400"
                 />
-              </div>
+              </div> */}
 
               <h2 className="text-lg font-semibold text-gray-800 border-b pb-1">
                 Check Point
