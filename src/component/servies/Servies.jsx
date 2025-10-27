@@ -157,7 +157,7 @@ const ServicesForm = () => {
   // ✅ UI
   return (
     <div className="w-full min-h-screen bg-blue-950 py-10 flex justify-center items-center">
-      <div className="w-full max-w-5xl mx-auto px-6">
+      <div className="w-full max-w-full mx-auto px-6">
         <div className="bg-white shadow-lg rounded-xl p-8 relative min-h-[600px]">
           {loading ? (
             <div className="flex flex-col items-center justify-center w-full h-full absolute inset-0 bg-white rounded-xl z-20">
